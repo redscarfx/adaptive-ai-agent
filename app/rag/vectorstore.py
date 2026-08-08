@@ -1,3 +1,8 @@
+import os
+
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
@@ -16,9 +21,14 @@ class VectorStore:
         )
 
     def add_documents(self, documents):
-
+        if self.db._collection.count() > 0:
+            print("Vector database already exists.")
+            return
         self.db.add_documents(documents)
-        print(self.db._collection.count())
+
+        print(
+            f"Indexed {self.db._collection.count()} chunks."
+        )
 
     def similarity_search(
         self,
@@ -31,12 +41,20 @@ class VectorStore:
             k=k,
         )
 
-    def as_retriever(self):
+    def as_retriever(
+        self,
+        search_type="similarity",
+        search_kwargs=None,
+    ):
 
-        return self.db.as_retriever(
-            search_kwargs={
+        if search_kwargs is None:
+            search_kwargs = {
                 "k": 4,
             }
+
+        return self.db.as_retriever(
+            search_type=search_type,
+            search_kwargs=search_kwargs,
         )
     
     def retriever(self):
