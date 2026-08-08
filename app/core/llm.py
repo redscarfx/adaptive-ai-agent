@@ -1,9 +1,9 @@
 import os
-
-from dotenv import load_dotenv
 from langchain_groq import ChatGroq
+from pathlib import Path
+from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 
 class LLMFactory:

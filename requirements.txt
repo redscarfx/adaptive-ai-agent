@@ -2,17 +2,23 @@ streamlit
 
 langchain
 langgraph
+
 langchain-groq
-langchain-google-genai
 langchain-community
+langchain-chroma
+langchain-text-splitters
+chromadb
+
+sentence-transformers
+langchain-huggingface
 
 pydantic
 python-dotenv
 
 pypdf
 beautifulsoup4
+lxml
 
-tiktoken
 requests
 
 pytest

@@ -33,6 +33,19 @@ def profile_sidebar() -> UserProfile:
             ConversationManager.switch(conversation)
             st.rerun()
 
+    st.sidebar.divider()
+    st.sidebar.subheader("📚 Knowledge")
+    uploaded = st.sidebar.file_uploader(
+        "Upload document",
+        type=[
+            "pdf",
+            "txt",
+            "md",
+        ],
+    )
+    url = st.sidebar.text_input(
+        "Website URL"
+    )
 
     with st.sidebar.expander(
         "👤 Profile",
