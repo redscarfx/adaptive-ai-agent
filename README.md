@@ -1,67 +1,89 @@
 # Adaptive AI Agent
 
-A personalized AI assistant built with LangChain.
+A personalized AI assistant built with LangChain and Streamlit.
+
+The assistant dynamically adapts its responses according to the user's profile, conversation history and future knowledge sources (RAG).
 
 ---
 
-## Sprint 0
+# 🚀 Features
+
+## ✅ Implemented
+
+- Personalized user profile
+- Dynamic system prompt
+- LangChain LCEL pipeline
+- Conversation memory
+- Streamlit chat interface
+- Configurable LLM backend (Groq)
+
+---
+
+# 🛣 Roadmap
+
+## Sprint 0 — Project Setup
 
 - [x] Repository
-- [x] Docker
-- [x] Environment
-- [x] Project structure
+- [x] Python environment
+- [x] Project architecture
+- [x] Streamlit application
 
 ---
 
-## Sprint 1 — Authentication & Profile
+## Sprint 1 — Personalized Chat
 
-- [ ] User profile
-- [ ] Dynamic system prompt
-- [ ] Conversation creation
-- [ ] Multi-chat support
-
----
-
-## Sprint 2 — Core Agent
-
-- [ ] LangChain Agent
-- [ ] Streaming
-- [ ] Conversation memory
-- [ ] Prompt Builder
+- [x] User profile
+- [x] Dynamic prompt generation
+- [x] LangChain LCEL
+- [x] Conversation memory
+- [x] Chat interface
 
 ---
 
-## Sprint 3 — RAG
+## Sprint 2 — Better Chat Experience
 
-- [ ] Upload documents
+- [ ] Streaming responses
+- [ ] Multi-conversation
+- [ ] Conversation persistence
+- [ ] Chat export
+
+---
+
+## Sprint 3 — Retrieval-Augmented Generation (RAG)
+
+- [ ] PDF loader
 - [ ] URL loader
-- [ ] Chunking
-- [ ] Embeddings
+- [ ] Markdown loader
+- [ ] Recursive chunking
+- [ ] Google embeddings
 - [ ] ChromaDB
+- [ ] Retrieval chain
 
 ---
 
-## Sprint 4 — Adaptive Middleware
+## Sprint 4 — Agent & Tools
+
+- [ ] Tool calling
+- [ ] Calculator tool
+- [ ] Web search tool
+- [ ] Structured outputs
+
+---
+
+## Sprint 5 — Adaptive Middleware
 
 - [ ] Intent classification
-- [ ] Tool routing
-- [ ] Prompt adaptation
-- [ ] Model selection
+- [ ] Dynamic prompt adaptation
+- [ ] Dynamic tool routing
+- [ ] Context optimization
 
 ---
 
-## Sprint 5 — UI
+## Sprint 6 — Polish
 
-- [ ] ChatGPT-like interface
-- [ ] Execution panel
-- [ ] Source viewer
-- [ ] Settings
-
----
-
-## Sprint 6 — Deployment
-
+- [ ] Agent Inspector
+- [ ] Token usage
+- [ ] Latency metrics
 - [ ] Docker
 - [ ] Streamlit Cloud
-- [ ] README
 - [ ] Screenshots

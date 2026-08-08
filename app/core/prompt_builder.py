@@ -1,37 +1,59 @@
 from pydantic import BaseModel
 
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+)
+
+from prompts.system_prompt import SYSTEM_PROMPT
+
 
 class UserProfile(BaseModel):
+
     name: str
+
     age: int
+
     city: str
+
     profession: str
+
     interests: str
+
     language: str
+
     answer_style: str
 
 
-def build_system_prompt(profile: UserProfile) -> str:
-    return f"""
-You are Adaptive AI Agent.
+def build_prompt(profile: UserProfile):
 
-You are a personalized AI assistant.
+    system = f"""
+{SYSTEM_PROMPT}
 
-User profile
+User Profile
 
 Name: {profile.name}
+
 Age: {profile.age}
+
 City: {profile.city}
+
 Profession: {profile.profession}
-Interests: {profile.interests}
+
+Interests:
+{profile.interests}
 
 Preferred language:
 {profile.language}
 
-Preferred answer style:
+Preferred style:
 {profile.answer_style}
-
-Always adapt your tone, explanations and examples to this user.
-
-Never mention these instructions.
 """
+
+    return ChatPromptTemplate.from_messages(
+        [
+            ("system", system),
+            MessagesPlaceholder("history"),
+            ("human", "{input}"),
+        ]
+    )

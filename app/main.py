@@ -1,5 +1,10 @@
 import streamlit as st
 
+from langchain_core.messages import (
+    HumanMessage,
+    AIMessage,
+)
+
 from ui.sidebar import profile_sidebar
 from ui.chat import (
     initialize_chat,
@@ -7,7 +12,8 @@ from ui.chat import (
     add_message,
 )
 
-from core.prompt_builder import build_system_prompt
+from core.chain import ChatChain
+
 
 st.set_page_config(
     page_title="Adaptive AI Agent",
@@ -15,11 +21,24 @@ st.set_page_config(
     layout="wide",
 )
 
+# ---------- Session ----------
+
 initialize_chat()
+
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+# ---------- User Profile ----------
 
 profile = profile_sidebar()
 
-system_prompt = build_system_prompt(profile)
+# Toujours reconstruire la chaîne
+# afin que les modifications du profil
+# soient immédiatement prises en compte.
+
+chat_chain = ChatChain(profile)
+
+# ---------- UI ----------
 
 st.title("🤖 Adaptive AI Agent")
 
@@ -35,6 +54,8 @@ prompt = st.chat_input(
 
 if prompt:
 
+    # Affichage utilisateur
+
     add_message(
         "user",
         prompt,
@@ -43,15 +64,31 @@ if prompt:
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    response = (
-        "🚀 LangChain agent will be connected "
-        "in the next sprint."
+    # LLM
+
+    response = chat_chain.invoke(
+        st.session_state.history,
+        prompt,
     )
+
+    # Historique LangChain
+
+    st.session_state.history.append(
+        HumanMessage(content=prompt)
+    )
+
+    st.session_state.history.append(
+        AIMessage(content=response)
+    )
+
+    # Historique Streamlit
 
     add_message(
         "assistant",
         response,
     )
+
+    # Affichage assistant
 
     with st.chat_message("assistant"):
         st.markdown(response)
