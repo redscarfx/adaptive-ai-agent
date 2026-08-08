@@ -47,5 +47,23 @@ class HybridRetriever:
         )
 
     def invoke(self, query):
+        documents = self.retriever.invoke(query)
 
-        return self.retriever.invoke(query)
+        unique = []
+        seen = set()
+
+        for doc in documents:
+
+            key = (
+                doc.metadata.get("source"),
+                doc.metadata.get("page"),
+                doc.page_content[:200],
+            )
+
+            if key in seen:
+                continue
+
+            seen.add(key)
+            unique.append(doc)
+
+        return unique
