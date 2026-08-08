@@ -1,9 +1,15 @@
 import streamlit as st
 
+from langchain_core.messages import (
+    HumanMessage,
+    AIMessage,
+)
+
 
 def initialize_chat():
 
     if "messages" not in st.session_state:
+
         st.session_state.messages = []
 
 
@@ -11,15 +17,28 @@ def display_chat():
 
     for message in st.session_state.messages:
 
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        role = (
+            "user"
+            if isinstance(message, HumanMessage)
+            else "assistant"
+        )
+
+        with st.chat_message(role):
+            st.markdown(message.content)
 
 
-def add_message(role: str, content: str):
+def add_user_message(content: str):
 
     st.session_state.messages.append(
-        {
-            "role": role,
-            "content": content,
-        }
+        HumanMessage(content=content)
     )
+
+
+def add_ai_message(content: str):
+
+    st.session_state.messages.append(
+        AIMessage(content=content)
+    )
+    
+def clear_chat():
+    st.session_state.messages = []

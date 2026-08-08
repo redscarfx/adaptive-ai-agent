@@ -1,16 +1,14 @@
 import streamlit as st
 
-from langchain_core.messages import (
-    HumanMessage,
-    AIMessage,
-)
 
 from ui.sidebar import profile_sidebar
 from ui.chat import (
     initialize_chat,
     display_chat,
-    add_message,
+    add_user_message,
+    add_ai_message,
 )
+from ui.conversations import conversations_panel
 
 from core.chain import ChatChain
 
@@ -21,24 +19,23 @@ st.set_page_config(
     layout="wide",
 )
 
-# ---------- Session ----------
 
 initialize_chat()
 
-if "history" not in st.session_state:
-    st.session_state.history = []
 
-# ---------- User Profile ----------
 
 profile = profile_sidebar()
 
-# Toujours reconstruire la chaîne
-# afin que les modifications du profil
-# soient immédiatement prises en compte.
+
 
 chat_chain = ChatChain(profile)
 
-# ---------- UI ----------
+
+
+
+
+
+
 
 st.title("🤖 Adaptive AI Agent")
 
@@ -46,18 +43,23 @@ st.caption(
     "Personalized AI Assistant powered by LangChain."
 )
 
-display_chat()
+left, right = st.columns(
+    [2, 6],
+    gap="medium",
+)
+
+with left:
+    conversations_panel()
+
+with right:
+    display_chat()
 
 prompt = st.chat_input(
     "Ask anything..."
 )
 
 if prompt:
-
-    add_message(
-        "user",
-        prompt,
-    )
+    add_user_message(prompt)
 
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -70,7 +72,7 @@ if prompt:
         placeholder = st.empty()
 
         for chunk in chat_chain.stream(
-            st.session_state.history,
+            st.session_state.messages,
             prompt,
         ):
             response += chunk
@@ -79,16 +81,5 @@ if prompt:
         placeholder.markdown(response)
 
 
-    st.session_state.history.append(
-        HumanMessage(content=prompt)
-    )
-
-    st.session_state.history.append(
-        AIMessage(content=response)
-    )
-
-    add_message(
-        "assistant",
-        response,
-    )
-
+    add_ai_message(response)
+    st.rerun()

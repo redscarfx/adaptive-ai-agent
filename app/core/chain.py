@@ -55,14 +55,6 @@ class ChatChain:
 
         self.chain = prompt | llm | StrOutputParser()
 
-    def invoke(self, session_id: str, question: str):
-
-        return self.chain.invoke(
-            {
-                "history": [],
-                "input": question,
-            }
-        )
         
     def stream(self, history, question):
 

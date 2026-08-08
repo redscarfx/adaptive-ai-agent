@@ -42,11 +42,10 @@ The assistant dynamically adapts its responses according to the user's profile, 
 
 ## Sprint 2 — Better Chat Experience
 
-- [ ] Streaming responses
+- [x] Streaming responses
 - [ ] Multi-conversation
 - [ ] Conversation persistence
 - [ ] Chat export
-
 ---
 
 ## Sprint 3 — Retrieval-Augmented Generation (RAG)
