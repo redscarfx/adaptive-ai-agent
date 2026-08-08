@@ -6,6 +6,8 @@ The assistant combines personalized prompting, conversation memory and
 Retrieval-Augmented Generation (RAG) to answer questions using user-provided
 documents.
 
+Work in progress.
+
 ---
 
 # 🚀 Features
