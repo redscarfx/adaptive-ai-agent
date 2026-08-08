@@ -65,3 +65,10 @@ class VectorStore:
                 "k": 4,
             },
         )
+    
+    def add_file(
+        self,
+        chunks,
+    ):
+
+        self.db.add_documents(chunks)

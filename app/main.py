@@ -3,9 +3,11 @@ import streamlit as st
 from ui.sidebar import profile_sidebar
 from ui.chat import display_chat
 
-from core.conversation_manager import ConversationManager
 from core.chain import ChatChain
+from core.rag_service import RAGService
+from core.conversation_manager import ConversationManager
 from core.title_generator import TitleGenerator
+
 
 st.set_page_config(
     page_title="Adaptive AI Agent",
@@ -13,92 +15,155 @@ st.set_page_config(
     layout="wide",
 )
 
-st.markdown("""
-<style>
 
-/* Header Streamlit */
-[data-testid="stHeader"]{
-    display:none;
-}
-
-/* Supprime la marge haute du contenu */
-.block-container{
-    padding-top:1rem;
-}
-
-/* Supprime la marge haute de la sidebar */
-[data-testid="stSidebarContent"]{
-    padding-top:0rem;
-}
-
-/* Colle le premier élément en haut */
-[data-testid="stSidebarContent"] > div:first-child{
-    margin-top:-3.2rem;
-}
-
-/* Réduit les espaces entre éléments */
-[data-testid="stVerticalBlock"]{
-    gap:0.5rem;
-}
-
-</style>
-""", unsafe_allow_html=True)
+# --------------------------------------------------
+# Initialization
+# --------------------------------------------------
 
 ConversationManager.initialize()
+
+if "rag" not in st.session_state:
+    st.session_state.rag = RAGService()
 
 profile = profile_sidebar()
 
 chat_chain = ChatChain(profile)
+
 title_generator = TitleGenerator()
+
+
+# --------------------------------------------------
+# UI
+# --------------------------------------------------
 
 st.title("🤖 Adaptive AI Agent")
 
-st.sidebar.markdown(
-    "<small>Powered by LangChain</small>",
-    unsafe_allow_html=True,
-)
-
 display_chat()
 
-prompt = st.chat_input("Ask anything...")
+
+# --------------------------------------------------
+# Input
+# --------------------------------------------------
+
+prompt = st.chat_input(
+    "Ask anything..."
+)
+
+
+# --------------------------------------------------
+# Processing
+# --------------------------------------------------
 
 if prompt:
 
-    ConversationManager.add_user(prompt)
-    
-    if ConversationManager.is_empty():
+    first_message = ConversationManager.is_empty()
 
-        old_name = ConversationManager.current_name()
+    ConversationManager.add_user(prompt)
+
+    # --------------------------------------------------
+    # Generate conversation title
+    # --------------------------------------------------
+
+    if first_message:
 
         try:
 
-            title = title_generator.generate(prompt)
-
-            
-            ConversationManager.rename(
-                old_name,
-                f"💬 {title}"
+            title = title_generator.generate(
+                prompt
             )
 
-        except Exception:
+            ConversationManager.rename(
+                ConversationManager.current_name(),
+                f"💬 {title}",
+            )
 
-            pass
+        except Exception as e:
+
+            st.warning(
+                f"Title generation failed: {e}"
+            )
+
+    # --------------------------------------------------
+    # Response
+    # --------------------------------------------------
+
+    placeholder = st.empty()
 
     with st.spinner("Thinking..."):
 
-        response = ""
+        # ==================================================
+        # RAG
+        # ==================================================
 
-        placeholder = st.empty()
-
-        for chunk in chat_chain.stream(
-            ConversationManager.current_messages(),
-            prompt,
+        if st.session_state.get(
+            "use_rag",
+            False,
         ):
-            response += chunk
-            placeholder.markdown(response + "▌")
 
-        placeholder.markdown(response)
+            result = st.session_state.rag.invoke(
+                ConversationManager.current_messages(),
+                prompt,
+            )
 
-    ConversationManager.add_ai(response)
+            response = result["answer"]
+
+            placeholder.markdown(
+                response
+            )
+
+            documents = result.get(
+                "documents",
+                [],
+            )
+
+            if documents:
+
+                with st.expander(
+                    "📄 Sources"
+                ):
+
+                    for doc in documents:
+
+                        source = doc.metadata.get(
+                            "source",
+                            "Unknown",
+                        )
+
+                        page = doc.metadata.get(
+                            "page",
+                            "-",
+                        )
+
+                        st.markdown(
+                            f"- **{source}** "
+                            f"(page {page})"
+                        )
+
+        # ==================================================
+        # Normal Chat
+        # ==================================================
+
+        else:
+
+            response = ""
+
+            for chunk in chat_chain.stream(
+                ConversationManager.current_messages(),
+                prompt,
+            ):
+
+                response += chunk
+
+                placeholder.markdown(
+                    response + "▌"
+                )
+
+            placeholder.markdown(
+                response
+            )
+
+    ConversationManager.add_ai(
+        response
+    )
 
     st.rerun()

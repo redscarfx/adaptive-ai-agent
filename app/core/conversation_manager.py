@@ -94,4 +94,4 @@ class ConversationManager:
 
         return len(
             ConversationManager.current_messages()
-        ) == 1
+        ) == 0

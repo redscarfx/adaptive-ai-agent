@@ -6,13 +6,21 @@ from core.conversation_manager import ConversationManager
 
 def profile_sidebar() -> UserProfile:
 
+    # --------------------------------------------------
+    # Header
+    # --------------------------------------------------
+
     st.sidebar.title("🤖 Adaptive AI Agent")
 
-    st.sidebar.subheader("Conversations")
+    # --------------------------------------------------
+    # Conversations
+    # --------------------------------------------------
+
+    st.sidebar.subheader("💬 Conversations")
 
     if st.sidebar.button(
         "➕",
-        help="Create a new conversation",
+        help="New conversation",
         use_container_width=True,
     ):
         ConversationManager.create()
@@ -20,9 +28,7 @@ def profile_sidebar() -> UserProfile:
 
     for conversation in st.session_state.conversations:
 
-        selected = ConversationManager.is_current(
-            conversation
-        )
+        selected = ConversationManager.is_current(conversation)
 
         if st.sidebar.button(
             conversation,
@@ -34,18 +40,48 @@ def profile_sidebar() -> UserProfile:
             st.rerun()
 
     st.sidebar.divider()
+
+    # --------------------------------------------------
+    # Knowledge
+    # --------------------------------------------------
+
     st.sidebar.subheader("📚 Knowledge")
+
     uploaded = st.sidebar.file_uploader(
         "Upload document",
-        type=[
-            "pdf",
-            "txt",
-            "md",
-        ],
+        type=["pdf", "txt", "md"],
     )
+
+    if uploaded:
+
+        key = f"indexed_{uploaded.name}"
+
+        if key not in st.session_state:
+
+            with st.spinner("Indexing document..."):
+
+                st.session_state.rag.add_document(
+                    uploaded
+                )
+
+            st.session_state[key] = True
+
+            st.sidebar.success("Document indexed.")
+
     url = st.sidebar.text_input(
-        "Website URL"
+        "Website URL",
     )
+
+    st.session_state.use_rag = st.sidebar.toggle(
+        "Enable RAG",
+        value=False,
+    )
+
+    st.sidebar.divider()
+
+    # --------------------------------------------------
+    # Profile
+    # --------------------------------------------------
 
     with st.sidebar.expander(
         "👤 Profile",
@@ -98,14 +134,21 @@ def profile_sidebar() -> UserProfile:
             ],
         )
 
+    # --------------------------------------------------
+    # Inspector
+    # --------------------------------------------------
 
     with st.sidebar.expander(
         "🧠 Agent Inspector",
         expanded=False,
     ):
+
         st.checkbox("Show prompt")
+
         st.checkbox("Show history")
+
         st.checkbox("Show latency")
+
         st.checkbox("Show tokens")
 
     return UserProfile(

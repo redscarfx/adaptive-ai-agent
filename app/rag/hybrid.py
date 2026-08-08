@@ -10,9 +10,6 @@ class HybridRetriever:
         vectorstore,
     ):
 
-        bm25 = BM25Retriever.from_documents(documents)
-        bm25.k = 4
-
         vector = vectorstore.as_retriever(
             search_type="mmr",
             search_kwargs={
@@ -22,15 +19,31 @@ class HybridRetriever:
             },
         )
 
-        self.retriever = EnsembleRetriever(
-            retrievers=[
+        retrievers = [vector]
+        weights = [1.0]
+
+        # BM25 requires at least one document.
+        if documents:
+
+            bm25 = BM25Retriever.from_documents(
+                documents
+            )
+
+            bm25.k = 4
+
+            retrievers = [
                 bm25,
                 vector,
-            ],
-            weights=[
+            ]
+
+            weights = [
                 0.35,
                 0.65,
-            ],
+            ]
+
+        self.retriever = EnsembleRetriever(
+            retrievers=retrievers,
+            weights=weights,
         )
 
     def invoke(self, query):

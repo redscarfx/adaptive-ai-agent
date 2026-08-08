@@ -1,8 +1,10 @@
 # Adaptive AI Agent
 
-A personalized AI assistant built with LangChain and Streamlit.
+A personalized AI assistant built with LangChain, LangGraph and Streamlit.
 
-The assistant dynamically adapts its responses according to the user's profile, conversation history and future knowledge sources (RAG).
+The assistant combines personalized prompting, conversation memory and
+Retrieval-Augmented Generation (RAG) to answer questions using user-provided
+documents.
 
 ---
 
@@ -13,11 +15,22 @@ The assistant dynamically adapts its responses according to the user's profile, 
 - Personalized user profile
 - Dynamic system prompt
 - LangChain LCEL pipeline
+- LangGraph-based conversation flow
 - Streaming responses
 - Multi-conversation chat
 - Automatic conversation titles
 - Conversation memory
-- Configurable LLM backend (Groq)
+- PDF, TXT and Markdown document ingestion
+- Recursive document chunking
+- HuggingFace embeddings
+- Chroma vector database
+- BM25 lexical retrieval
+- Hybrid retrieval
+- MMR vector retrieval
+- RAG-based question answering
+- Retrieved source display
+- User document upload and indexing
+- Configurable LLM backend with Groq
 
 ---
 
@@ -56,15 +69,19 @@ The assistant dynamically adapts its responses according to the user's profile, 
 
 ## Sprint 3 — Retrieval-Augmented Generation (RAG)
 
-- [ ] PDF loader
-- [ ] URL loader
-- [ ] Markdown loader
-- [ ] Recursive chunking
-- [ ] Google embeddings
-- [ ] ChromaDB
-- [ ] History-aware retriever
-- [ ] Retrieval chain
-- [ ] Source citations
+- [x] PDF loader
+- [x] URL loader
+- [x] Markdown loader
+- [x] Recursive chunking
+- [x] HuggingFace embeddings
+- [x] ChromaDB
+- [x] BM25 retrieval
+- [x] Hybrid retrieval
+- [x] MMR retrieval
+- [x] History-aware retrieval
+- [x] Retrieval chain
+- [x] Source citations
+- [x] User document upload and indexing
 
 ---
 
@@ -102,3 +119,44 @@ The assistant dynamically adapts its responses according to the user's profile, 
 - [ ] Docker
 - [ ] Streamlit Cloud
 - [ ] Screenshots
+
+---
+
+# 🏗️ Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │      Streamlit      │
+                    │        UI           │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Conversation      │
+                    │     Manager          │
+                    └──────────┬──────────┘
+                               │
+                    ┌──────────▼──────────┐
+                    │    LangGraph /      │
+                    │    LangChain        │
+                    └──────────┬──────────┘
+                               │
+                 ┌─────────────┴─────────────┐
+                 │                           │
+                 ▼                           ▼
+        ┌─────────────────┐        ┌─────────────────┐
+        │    Chat LLM     │        │      RAG        │
+        │      Groq       │        │                 │
+        └─────────────────┘        └────────┬────────┘
+                                             │
+                                  ┌──────────▼──────────┐
+                                  │ Hybrid Retrieval    │
+                                  │                     │
+                                  │ BM25 + Chroma/MMR  │
+                                  └──────────┬──────────┘
+                                             │
+                                  ┌──────────▼──────────┐
+                                  │     Documents       │
+                                  │                     │
+                                  │ PDF / TXT / Markdown│
+                                  └─────────────────────┘
