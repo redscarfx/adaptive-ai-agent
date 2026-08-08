@@ -13,8 +13,10 @@ The assistant dynamically adapts its responses according to the user's profile, 
 - Personalized user profile
 - Dynamic system prompt
 - LangChain LCEL pipeline
+- Streaming responses
+- Multi-conversation chat
+- Automatic conversation titles
 - Conversation memory
-- Streamlit chat interface
 - Configurable LLM backend (Groq)
 
 ---
@@ -43,9 +45,13 @@ The assistant dynamically adapts its responses according to the user's profile, 
 ## Sprint 2 — Better Chat Experience
 
 - [x] Streaming responses
-- [ ] Multi-conversation
+- [x] Multi-conversation
+- [x] Automatic conversation titles
 - [ ] Conversation persistence
 - [ ] Chat export
+- [ ] Conversation rename
+- [ ] Conversation delete
+
 ---
 
 ## Sprint 3 — Retrieval-Augmented Generation (RAG)
@@ -56,7 +62,9 @@ The assistant dynamically adapts its responses according to the user's profile, 
 - [ ] Recursive chunking
 - [ ] Google embeddings
 - [ ] ChromaDB
+- [ ] History-aware retriever
 - [ ] Retrieval chain
+- [ ] Source citations
 
 ---
 
@@ -66,6 +74,10 @@ The assistant dynamically adapts its responses according to the user's profile, 
 - [ ] Calculator tool
 - [ ] Web search tool
 - [ ] Structured outputs
+- [ ] Pydantic schemas
+- [ ] RunnableBranch
+- [ ] RunnableParallel
+- [ ] RunnablePassthrough
 
 ---
 
@@ -75,14 +87,18 @@ The assistant dynamically adapts its responses according to the user's profile, 
 - [ ] Dynamic prompt adaptation
 - [ ] Dynamic tool routing
 - [ ] Context optimization
+- [ ] Configurable models
+- [ ] Message trimming
 
 ---
 
 ## Sprint 6 — Polish
 
 - [ ] Agent Inspector
+- [ ] Prompt viewer
 - [ ] Token usage
 - [ ] Latency metrics
+- [ ] Tool execution trace
 - [ ] Docker
 - [ ] Streamlit Cloud
 - [ ] Screenshots
