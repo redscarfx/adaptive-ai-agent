@@ -8,7 +8,7 @@ def profile_sidebar() -> UserProfile:
 
     name = st.sidebar.text_input(
         "Name",
-        value="Guest",
+        value="Samuel",
     )
 
     age = st.sidebar.number_input(
@@ -25,12 +25,12 @@ def profile_sidebar() -> UserProfile:
 
     profession = st.sidebar.text_input(
         "Profession",
-        value="Student",
+        value="Librarian",
     )
 
     interests = st.sidebar.text_area(
         "Interests",
-        value="Artificial Intelligence",
+        value="History of art",
     )
 
     language = st.sidebar.selectbox(
@@ -48,6 +48,7 @@ def profile_sidebar() -> UserProfile:
             "Concise",
             "Educational",
             "Detailed",
+            "Artistic",
         ],
     )
 

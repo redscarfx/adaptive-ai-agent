@@ -63,3 +63,12 @@ class ChatChain:
                 "input": question,
             }
         )
+        
+    def stream(self, history, question):
+
+        return self.chain.stream(
+            {
+                "history": history,
+                "input": question,
+            }
+        )

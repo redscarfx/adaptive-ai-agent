@@ -54,8 +54,6 @@ prompt = st.chat_input(
 
 if prompt:
 
-    # Affichage utilisateur
-
     add_message(
         "user",
         prompt,
@@ -64,14 +62,22 @@ if prompt:
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # LLM
 
-    response = chat_chain.invoke(
-        st.session_state.history,
-        prompt,
-    )
+    response = ""
 
-    # Historique LangChain
+    with st.chat_message("assistant"):
+
+        placeholder = st.empty()
+
+        for chunk in chat_chain.stream(
+            st.session_state.history,
+            prompt,
+        ):
+            response += chunk
+            placeholder.markdown(response + "▌")
+
+        placeholder.markdown(response)
+
 
     st.session_state.history.append(
         HumanMessage(content=prompt)
@@ -81,14 +87,8 @@ if prompt:
         AIMessage(content=response)
     )
 
-    # Historique Streamlit
-
     add_message(
         "assistant",
         response,
     )
 
-    # Affichage assistant
-
-    with st.chat_message("assistant"):
-        st.markdown(response)
