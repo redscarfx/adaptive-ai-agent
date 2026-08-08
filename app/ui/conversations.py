@@ -1,20 +1,9 @@
 import streamlit as st
 
-
-def initialize_conversations():
-
-    if "conversations" not in st.session_state:
-
-        st.session_state.conversations = {
-            "💬 Chat 1": st.session_state.messages
-        }
-
-        st.session_state.current_chat = "💬 Chat 1"
+from core.conversation_manager import ConversationManager
 
 
 def conversations_panel():
-
-    initialize_conversations()
 
     st.subheader("💬 Conversations")
 
@@ -22,14 +11,23 @@ def conversations_panel():
         "➕ New Chat",
         use_container_width=True,
     ):
-        pass
+
+        ConversationManager.create()
+
+        st.rerun()
 
     st.divider()
 
     for conversation in st.session_state.conversations:
 
-        st.button(
+        if st.button(
             conversation,
             key=conversation,
             use_container_width=True,
-        )
+        ):
+
+            ConversationManager.switch(
+                conversation
+            )
+
+            st.rerun()

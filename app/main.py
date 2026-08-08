@@ -1,17 +1,10 @@
 import streamlit as st
 
-
 from ui.sidebar import profile_sidebar
-from ui.chat import (
-    initialize_chat,
-    display_chat,
-    add_user_message,
-    add_ai_message,
-)
-from ui.conversations import conversations_panel
+from ui.chat import display_chat
 
+from core.conversation_manager import ConversationManager
 from core.chain import ChatChain
-
 
 st.set_page_config(
     page_title="Adaptive AI Agent",
@@ -19,60 +12,66 @@ st.set_page_config(
     layout="wide",
 )
 
+st.markdown("""
+<style>
 
-initialize_chat()
+/* Header Streamlit */
+[data-testid="stHeader"]{
+    display:none;
+}
 
+/* Supprime la marge haute du contenu */
+.block-container{
+    padding-top:1rem;
+}
 
+/* Supprime la marge haute de la sidebar */
+[data-testid="stSidebarContent"]{
+    padding-top:0rem;
+}
+
+/* Colle le premier élément en haut */
+[data-testid="stSidebarContent"] > div:first-child{
+    margin-top:-3.2rem;
+}
+
+/* Réduit les espaces entre éléments */
+[data-testid="stVerticalBlock"]{
+    gap:0.5rem;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+ConversationManager.initialize()
 
 profile = profile_sidebar()
 
-
-
 chat_chain = ChatChain(profile)
-
-
-
-
-
-
-
 
 st.title("🤖 Adaptive AI Agent")
 
-st.caption(
-    "Personalized AI Assistant powered by LangChain."
+st.sidebar.markdown(
+    "<small>Powered by LangChain</small>",
+    unsafe_allow_html=True,
 )
 
-left, right = st.columns(
-    [2, 6],
-    gap="medium",
-)
+display_chat()
 
-with left:
-    conversations_panel()
-
-with right:
-    display_chat()
-
-prompt = st.chat_input(
-    "Ask anything..."
-)
+prompt = st.chat_input("Ask anything...")
 
 if prompt:
-    add_user_message(prompt)
 
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    ConversationManager.add_user(prompt)
 
+    with st.spinner("Thinking..."):
 
-    response = ""
-
-    with st.chat_message("assistant"):
+        response = ""
 
         placeholder = st.empty()
 
         for chunk in chat_chain.stream(
-            st.session_state.messages,
+            ConversationManager.current_messages(),
             prompt,
         ):
             response += chunk
@@ -80,6 +79,6 @@ if prompt:
 
         placeholder.markdown(response)
 
+    ConversationManager.add_ai(response)
 
-    add_ai_message(response)
     st.rerun()
