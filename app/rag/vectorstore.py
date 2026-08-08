@@ -18,6 +18,7 @@ class VectorStore:
     def add_documents(self, documents):
 
         self.db.add_documents(documents)
+        print(self.db._collection.count())
 
     def similarity_search(
         self,
@@ -36,4 +37,13 @@ class VectorStore:
             search_kwargs={
                 "k": 4,
             }
+        )
+    
+    def retriever(self):
+
+        return self.db.as_retriever(
+            search_type="similarity",
+            search_kwargs={
+                "k": 4,
+            },
         )

@@ -2,13 +2,14 @@ streamlit
 
 langchain
 langgraph
-
+langchain-core
 langchain-groq
 langchain-community
 langchain-chroma
 langchain-text-splitters
 chromadb
-
+langgraph
+langgraph-checkpoint
 sentence-transformers
 langchain-huggingface
 
