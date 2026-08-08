@@ -11,9 +11,39 @@ class TitleGenerator:
             ChatPromptTemplate.from_messages([
                 (
                     "system",
-                    "Generate a conversation title in at most 4 words."
+                    """
+                You generate chat titles.
+
+                Rules:
+                - Maximum 3 words.
+                - Noun phrase only.
+                - Never answer the question.
+                - Never summarize the assistant response.
+                - Never start with a verb.
+                - No punctuation.
+                - No quotes.
+
+                Examples:
+
+                Question:
+                "What is PCA?"
+                Title:
+                PCA
+
+                Question:
+                "How does Docker networking work?"
+                Title:
+                Docker Networking
+
+                Question:
+                "Explain attention mechanism"
+                Title:
+                Attention Mechanism
+
+                Return ONLY the title.
+                """
                 ),
-                (
+                                (
                     "human",
                     "{question}"
                 )

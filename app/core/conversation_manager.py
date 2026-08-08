@@ -67,3 +67,31 @@ class ConversationManager:
         return (
             st.session_state.current_chat == name
         )
+        
+    @staticmethod
+    def rename(old_name: str, new_name: str):
+        conversations = st.session_state.conversations
+        title = new_name.strip()
+        words = title.split()
+        if len(words) > 4:
+            title = " ".join(words[:4])
+        if len(title) > 40:
+            title = title[:37] + "..."
+
+        base = title
+        final_name = base
+        i = 2
+
+        while final_name in conversations:
+            final_name = f"{base} ({i})"
+            i += 1
+
+        conversations[final_name] = conversations.pop(old_name)
+        st.session_state.current_chat = final_name
+        
+    @staticmethod
+    def is_empty():
+
+        return len(
+            ConversationManager.current_messages()
+        ) == 1

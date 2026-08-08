@@ -5,6 +5,7 @@ from ui.chat import display_chat
 
 from core.conversation_manager import ConversationManager
 from core.chain import ChatChain
+from core.title_generator import TitleGenerator
 
 st.set_page_config(
     page_title="Adaptive AI Agent",
@@ -48,6 +49,7 @@ ConversationManager.initialize()
 profile = profile_sidebar()
 
 chat_chain = ChatChain(profile)
+title_generator = TitleGenerator()
 
 st.title("🤖 Adaptive AI Agent")
 
@@ -63,6 +65,24 @@ prompt = st.chat_input("Ask anything...")
 if prompt:
 
     ConversationManager.add_user(prompt)
+    
+    if ConversationManager.is_empty():
+
+        old_name = ConversationManager.current_name()
+
+        try:
+
+            title = title_generator.generate(prompt)
+
+            
+            ConversationManager.rename(
+                old_name,
+                f"💬 {title}"
+            )
+
+        except Exception:
+
+            pass
 
     with st.spinner("Thinking..."):
 
